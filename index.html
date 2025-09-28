@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кирилл и Стас — Челлендж</title>
+<style>
+  body { font-family: Arial, sans-serif; background: linear-gradient(to bottom, #0f172a, #071029); color: #fff; text-align: center; padding: 50px; }
+  .counter { font-size: 48px; font-weight: bold; margin: 20px 0; }
+  .time { font-size: 36px; font-weight: 500; margin: 10px 0; }
+  .button { padding: 12px 20px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+  .reset-button { background: linear-gradient(90deg, #ef4444, #f97316); color: #081028; }
+  .input-name { padding: 8px; border-radius: 6px; border: none; font-size: 16px; }
+  .info { margin-top: 20px; font-size: 14px; opacity: 0.85; }
+</style>
+</head>
+<body>
+<h1>Кирилл и Стас — Челлендж</h1>
+<p>Старт: <strong>28 сентября 2025</strong></p>
+<div class="counter" id="daysCounter">0</div>
+<div class="time" id="timeCounter">00:00:00</div>
+<input type="text" id="nameInput" class="input-name" placeholder="Ваше имя (например: Стас)">
+<br>
+<button class="button reset-button" onclick="resetCounter()">Сбросить</button>
+<div class="info" id="lastResetInfo">Последний сброс: ещё не было</div>
+<div class="info">Совет: короткая прогулка, холодный душ или 10 отжиманий помогает справиться с тягой.</div>
+<script>
+const startDate = new Date('2025-09-28');
+let lastReset = localStorage.getItem('lastReset') ? new Date(localStorage.getItem('lastReset')) : null;
+
+function updateCounter() {
+  const baseDate = lastReset || startDate;
+  const now = new Date();
+  const diffTime = now - baseDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  document.getElementById('daysCounter').textContent = diffDays + 1;
+
+  // часы, минуты, секунды
+  let hours = Math.floor(diffTime / (1000 * 60 * 60)) % 24;
+  let minutes = Math.floor(diffTime / (1000 * 60)) % 60;
+  let seconds = Math.floor(diffTime / 1000) % 60;
+  document.getElementById('timeCounter').textContent =
+    String(hours).padStart(2,'0') + ':' +
+    String(minutes).padStart(2,'0') + ':' +
+    String(seconds).padStart(2,'0');
+}
+
+function resetCounter() {
+  const name = document.getElementById('nameInput').value || 'Неизвестно';
+  if(confirm(`Точно сбросить счётчик? Сброс выполнит: ${name}`)) {
+    lastReset = new Date();
+    localStorage.setItem('lastReset', lastReset.toISOString());
+    document.getElementById('lastResetInfo').textContent = `Последний сброс: ${lastReset.toLocaleDateString()} (${name})`;
+    updateCounter();
+  }
+}
+
+// инициализация
+if(lastReset) {
+  document.getElementById('lastResetInfo').textContent = `Последний сброс: ${lastReset.toLocaleDateString()}`;
+}
+updateCounter();
+setInterval(updateCounter, 1000); // автообновление каждую секунду
+</script>
+</body>
+</html>
